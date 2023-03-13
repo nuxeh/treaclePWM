@@ -13,18 +13,23 @@ struct treaclePWM {
   void setFrequency(float hz) {} /* calculate and set the period */
   void setDutyCycle(float pc) {} /* set high percentage of period */
   void start() { running = true; }
-  void stop() { running = false; }
+  void stop() { running = false; drive(false); }
   bool isRunning() { return running; }
+  void setInverted(bool i) { inverted = i; }
   void ping() {
+    if (!running) return;
     uint32_t t = micros();
-    if (!state && t - lastTick > timeout) {
+    uint32_t i = t - lastTick;
+    if (!state && i > timeout) {
       state = true;
+      drive(state ^ inverted);
       lastTick = t;
-    }
-    if (state && t - lastTick > timeoutHigh) {
+    } else if (state && i > timeoutHigh) {
       state = false;
+      drive(state ^ inverted);
     }
   }
+  void drive(bool state) { digitalWrite(pin, state); }
 
 private:
   bool state = false;
