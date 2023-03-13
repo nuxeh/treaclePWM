@@ -1,6 +1,8 @@
 #ifndef __TREACLE_PWM_H__
 #define __TREACLE_PWM_H__
 
+#include <Arduino.h>
+
 struct treaclePWM {
   treaclePWM(uint8_t pin) : pin(pin) {};
   treaclePWM(uint8_t pin, bool inv) : pin(pin), inverted(inv) {};
@@ -13,7 +15,7 @@ struct treaclePWM {
   void setLowPeriod(uint32_t us) { timeoutHigh = timeout - us; }
   void setFrequency(float hz) { timeout = (uint32_t)((1.0 / hz) * 1000000.0); }
   void setDutyCycle(float pc) { timeoutHigh = (uint32_t)((float)timeout * pc / 100.0); }
-  void start() { running = true; }
+  void start() { running = true; pinMode(pin, OUTPUT); }
   void stop() { running = false; drive(false); }
   bool isRunning() { return running; }
   void setInverted(bool i) { inverted = i; }
@@ -24,14 +26,14 @@ struct treaclePWM {
     uint32_t i = t - lastTick;
     if (!state && i > timeout) {
       state = true;
-      drive(state ^ inverted);
+      drive(state);
       lastTick = t;
     } else if (state && i > timeoutHigh) {
       state = false;
-      drive(state ^ inverted);
+      drive(state);
     }
   }
-  void drive(bool state) { digitalWrite(pin, state); }
+  void drive(bool state) { digitalWrite(pin, state ^ inverted); }
 
 private:
   bool state = false;

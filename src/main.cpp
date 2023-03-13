@@ -1,12 +1,15 @@
-#include <Arduino.h>
-
+#include <TimerOne.h>
 #include <treaclePWM.h>
 
-treaclePWM tpwm(5);
+treaclePWM tpwm(6);
+
+void ping() { tpwm.ping(); }
 
 void setup() {
-  tpwm.setFrequency(5.0);
-  tpwm.setDutyCycle(50.0);
+  Timer1.initialize(5000);
+  Timer1.attachInterrupt(ping);
+  tpwm.setFrequency(8.0);
+  tpwm.setDutyCycle(0.1);
   tpwm.start();
 }
 
