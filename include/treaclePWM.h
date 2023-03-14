@@ -12,20 +12,23 @@ struct treaclePWM {
   void setPeriodUs(uint32_t us) { timeout = us; }
   void setHighPeriodUs(uint16_t ms) { timeoutHigh = ms * 1000UL; }
   void setHighPeriodUs(uint32_t us) { timeoutHigh = us; }
-  void setLowPeriod(uint32_t us) { timeoutHigh = timeout - us; }
+  void setLowPeriod(uint32_t us) { if (us < timeout) { timeoutHigh = timeout - us; } else { timeoutHigh = 0; } }
   void setFrequency(float hz) { timeout = (uint32_t)((1.0 / hz) * 1000000.0); }
-  void setDutyCycle(float pc) { timeoutHigh = (uint32_t)((float)timeout * pc / 100.0); Serial.println(timeoutHigh);}
+  void setDutyCyclePercent(float pc) { timeoutHigh = (uint32_t)((float)timeout * pc / 100.0); }
+  void setDutyCycle(float r) { timeoutHigh = (uint32_t)((float)timeout * r); }
+  void setDutyCycleByte(uint8_t v) { timeoutHigh = (uint32_t)((((timeout * (uint32_t)v) << 4) / 255UL) >> 4); }
   void start() { running = true; pinMode(pin, OUTPUT); }
   void stop() { running = false; drive(false); }
   bool isRunning() { return running; }
   void setInverted(bool i) { inverted = i; }
+  void drive(bool state) { digitalWrite(pin, state ^ inverted); }
   void ping() {
     if (!running) return;
     if (timeout == 0) return;
     uint32_t t = micros();
     uint32_t i = t - lastTick;
     if (!state && i > timeout) {
-      state = true;
+      state = (timeoutHigh > 0);
       drive(state);
       lastTick = t;
     } else if (state && i > timeoutHigh) {
@@ -33,7 +36,6 @@ struct treaclePWM {
       drive(state);
     }
   }
-  void drive(bool state) { digitalWrite(pin, state ^ inverted); }
 
 private:
   bool state = false;
