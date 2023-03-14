@@ -14,7 +14,7 @@ struct treaclePWM {
   void setHighPeriodUs(uint32_t us) { timeoutHigh = us; }
   void setLowPeriod(uint32_t us) { timeoutHigh = timeout - us; }
   void setFrequency(float hz) { timeout = (uint32_t)((1.0 / hz) * 1000000.0); }
-  void setDutyCycle(float pc) { timeoutHigh = (uint32_t)((float)timeout * pc / 100.0); }
+  void setDutyCycle(float pc) { timeoutHigh = (uint32_t)((float)timeout * pc / 100.0); Serial.println(timeoutHigh);}
   void start() { running = true; pinMode(pin, OUTPUT); }
   void stop() { running = false; drive(false); }
   bool isRunning() { return running; }
