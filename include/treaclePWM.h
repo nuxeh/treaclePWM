@@ -5,7 +5,7 @@
 
 struct treaclePWM {
   treaclePWM(uint8_t pin) : pin(pin) {};
-  treaclePWM(uint8_t pin, bool inv) : pin(pin), inverted(inv) {};
+  treaclePWM(uint8_t pin, bool inv) : inverted(inv), pin(pin) {};
 
   void setPin(int p) { pin = p; }
   void setPeriodMs(uint16_t ms) { timeout = ms * 1000UL; }
