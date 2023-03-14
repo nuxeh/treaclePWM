@@ -1,5 +1,7 @@
 ## treaclePWM
 
+[![PlatformIO Registry](https://badges.registry.platformio.org/packages/nuxeh/library/treaclePWM.svg)](https://registry.platformio.org/libraries/nuxeh/treaclePWM)
+
 A very small PWM library providing (almost) arbitrary frequency and duty cycle
 on a GPIO pin. Pulse width and period may be freely configured. `treaclePWM`
 works with timeouts, calculating time using the `micros()` Arduino API call,
